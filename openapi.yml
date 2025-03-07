@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  title: My API
+  title: Arrigoo CDP API
   version: 1.0.0
 servers:
   - url: http://localhost:3030/v1
