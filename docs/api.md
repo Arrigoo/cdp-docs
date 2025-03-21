@@ -50,7 +50,7 @@ Response:
 
 ```json
 {
-    "access_token": "d0b9553e-9c79-4b77-b50f-8ce71e06a694",
+    "access_token": "16xxxx1d-9xx2-4xxe-axx1-bdxxxxxxxx6b",
     "expiry": "2025-03-21T11:17:08+01:00"
 }
 ```
