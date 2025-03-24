@@ -98,7 +98,7 @@ For performance reasons, the properties are omitted from the response.
 ### Get a single profile
 
 ```bash
-GET /v1/customer/{profile ID}
+GET /v1/customer/{profile UUID}
 ```
 
 **Response:**
@@ -131,8 +131,10 @@ GET /v1/customer/{profile ID}
 ### Fetch all customers in a specific segment
 
 ```bash
-GET /v1/customer/segment/{segment_id}
+GET /v1/customer/segment/{segment_system_title}
 ```
+
+NB: The segment is identified by the system title, not the ID.
 
 **Response:**
 
@@ -168,8 +170,7 @@ Requires admin or above. Create or update properties and identifiers directly on
 
 * If two identifiers are suppplied and one of them matches an existing profile, the other will be updated.
 * If two identifiers are suppplied and they match two different profiles, an error will be thrown.
-* It is possible to update a dynamic property. This means that it can be overridden by incoming events. This may be desireable in certain situations, so you have to keep track of that yourself.
-
+* It is possible to update a dynamic property. This means that it can be overridden by incoming events. This may be desireable in certain situations and is thus not considered a bug.
 
 ```bash
 PUT /v1/customer
@@ -190,15 +191,18 @@ Payload:
         }
     ],
     "properties": {
-            "name": "Bib Bobsen"
+            "name": "Bib Bobsen",
+            "subscription_id": "ytrewq"
     }
 }
 
 ```
 
+Note that the email is not sent as a property. Identifiers do not need a corresponding property, but then it is not available for segmentation.
+
 ## Statistics
 
-The statistics for the dashboard and numbers displayed in the interface are all available through the API. 
+The statistics for the dashboard and numbers displayed in the interface are all available through the API.
 They are based on aggregated datasets that are build at night.
 
 ```bash
