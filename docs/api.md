@@ -98,7 +98,7 @@ For performance reasons, the properties are omitted from the response.
 ### Get a single profile
 
 ```bash
-GET /v1/customer/{profile ID}
+GET /v1/customer/{profile UUID}
 ```
 
 **Response:**
@@ -131,8 +131,10 @@ GET /v1/customer/{profile ID}
 ### Fetch all customers in a specific segment
 
 ```bash
-GET /v1/customer/segment/{segment_id}
+GET /v1/customer/segment/{segment_system_title}
 ```
+
+NB: The segment is identified by the system title, not the ID.
 
 **Response:**
 
@@ -168,8 +170,7 @@ Requires admin or above. Create or update properties and identifiers directly on
 
 * If two identifiers are suppplied and one of them matches an existing profile, the other will be updated.
 * If two identifiers are suppplied and they match two different profiles, an error will be thrown.
-* It is possible to update a dynamic property. This means that it can be overridden by incoming events. This may be desireable in certain situations, so you have to keep track of that yourself.
-
+* It is possible to update a dynamic property. This means that it can be overridden by incoming events. This may be desireable in certain situations and is thus not considered a bug.
 
 ```bash
 PUT /v1/customer
@@ -190,15 +191,19 @@ Payload:
         }
     ],
     "properties": {
-            "name": "Bib Bobsen"
+            "name": "Bib Bobsen",
+            "subscription_id": "ytrewq"
     }
 }
 
 ```
 
+Note that the email is not sent as a property. Identifiers do not need a corresponding property, but then it is not available for segmentation.
+
 ## Statistics
 
-The statistics for the dashboard and numbers displayed in the interface are all available through the API. 
+The statistics for the dashboard and numbers displayed in the interface are all available through the API.
+
 They are based on aggregated datasets that are build at night.
 
 ```bash
@@ -244,6 +249,99 @@ GET /v1/stat/segment
             "stats": {
                 "active": 3009,
                 "inactive": 592
+            }
+        }
+    ]
+}
+```
+
+```bash
+GET /v1/stat/event
+```
+
+Daily event stats for the past month.
+
+**Response**
+```json
+{
+    "types": [
+        "checkout",
+        "login",
+        "nl_signup",
+        "nl_unsubscribe",
+        "pageview",
+        "pageview_nl",
+        "purchase"
+    ],
+    "entries": [
+        {
+            "total": 137,
+            "entry": "2025-02-25T00:00:00Z",
+            "stats": {
+                "checkout": 137,
+                "login": 129,
+                "nl_signup": 114,
+                "nl_unsubscribe": 439,
+                "pageview": 466,
+                "pageview_nl": 409,
+                "purchase": 438
+            }
+        },
+        {
+            "total": 121,
+            "entry": "2025-02-26T00:00:00Z",
+            "stats": {
+                "checkout": 121,
+                "login": 128,
+                "nl_signup": 126,
+                "nl_unsubscribe": 453,
+                "pageview": 466,
+                "pageview_nl": 409,
+                "purchase": 352
+            }
+        },
+        ...
+   ]
+}
+```
+
+```bash
+GET /v1/stat/event/month
+```
+
+Monthly event stats.
+
+**Response**
+```json
+{
+    "types": [],
+    "entries": [
+        {
+            "total": 32572,
+            "entry": "2024-12",
+            "stats": {
+                "total": 32572
+            }
+        },
+        {
+            "total": 152286,
+            "entry": "2025-01",
+            "stats": {
+                "total": 152286
+            }
+        },
+        {
+            "total": 87882,
+            "entry": "2025-02",
+            "stats": {
+                "total": 87882
+            }
+        },
+        {
+            "total": 23504,
+            "entry": "2025-03",
+            "stats": {
+                "total": 23504
             }
         }
     ]
