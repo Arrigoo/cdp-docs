@@ -203,6 +203,7 @@ Note that the email is not sent as a property. Identifiers do not need a corresp
 ## Statistics
 
 The statistics for the dashboard and numbers displayed in the interface are all available through the API.
+
 They are based on aggregated datasets that are build at night.
 
 ```bash
@@ -248,6 +249,99 @@ GET /v1/stat/segment
             "stats": {
                 "active": 3009,
                 "inactive": 592
+            }
+        }
+    ]
+}
+```
+
+```bash
+GET /v1/stat/event
+```
+
+Daily event stats for the past month.
+
+**Response**
+```json
+{
+    "types": [
+        "checkout",
+        "login",
+        "nl_signup",
+        "nl_unsubscribe",
+        "pageview",
+        "pageview_nl",
+        "purchase"
+    ],
+    "entries": [
+        {
+            "total": 137,
+            "entry": "2025-02-25T00:00:00Z",
+            "stats": {
+                "checkout": 137,
+                "login": 129,
+                "nl_signup": 114,
+                "nl_unsubscribe": 439,
+                "pageview": 466,
+                "pageview_nl": 409,
+                "purchase": 438
+            }
+        },
+        {
+            "total": 121,
+            "entry": "2025-02-26T00:00:00Z",
+            "stats": {
+                "checkout": 121,
+                "login": 128,
+                "nl_signup": 126,
+                "nl_unsubscribe": 453,
+                "pageview": 466,
+                "pageview_nl": 409,
+                "purchase": 352
+            }
+        },
+        ...
+   ]
+}
+```
+
+```bash
+GET /v1/stat/event/month
+```
+
+Monthly event stats.
+
+**Response**
+```json
+{
+    "types": [],
+    "entries": [
+        {
+            "total": 32572,
+            "entry": "2024-12",
+            "stats": {
+                "total": 32572
+            }
+        },
+        {
+            "total": 152286,
+            "entry": "2025-01",
+            "stats": {
+                "total": 152286
+            }
+        },
+        {
+            "total": 87882,
+            "entry": "2025-02",
+            "stats": {
+                "total": 87882
+            }
+        },
+        {
+            "total": 23504,
+            "entry": "2025-03",
+            "stats": {
+                "total": 23504
             }
         }
     ]
