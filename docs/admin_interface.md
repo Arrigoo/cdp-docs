@@ -53,8 +53,6 @@ A stacked bar chart visualizing the volume and variety of events logged daily.
 
 The **Profiles** section gives you access to all the user profiles stored in the CDP. It is divided into two main views: a high-level dashboard overview and a detailed profile listing.
 
----
-
 ### Profile Dashboard
 
 The dashboard provides a quick summary of the total number of profiles and how many of them have been identified (i.e., associated with identifiers such as email addresses).
@@ -65,8 +63,6 @@ The dashboard provides a quick summary of the total number of profiles and how m
 - **Look up profile:** A utility to search for specific profiles by identifier (e.g., Profile ID or email).
 
 Use this dashboard to quickly assess CDP coverage and effectiveness in identifying users across your data sources.
-
----
 
 ### Profile Listing
 
