@@ -24,7 +24,7 @@ The left-hand sidebar provides quick access to all major features in the admin i
 
 The **Dashboard** provides an overview of the activity within your CDP. It is the landing view after logging into the admin interface and offers a snapshot of key metrics across your profiles, events, and segments.
 
-### 📊 CDP Status Panels
+### CDP Status Panels
 
 The dashboard displays three main charts:
 
@@ -48,3 +48,37 @@ A stacked bar chart visualizing the volume and variety of events logged daily.
 - **X-axis**: Dates
 - Each color in the stack corresponds to a different event type
 - Useful for identifying behavior trends and validating data capture
+
+## Profiles
+
+The **Profiles** section gives you access to all the user profiles stored in the CDP. It is divided into two main views: a high-level dashboard overview and a detailed profile listing.
+
+---
+
+### Profile Dashboard
+
+The dashboard provides a quick summary of the total number of profiles and how many of them have been identified (i.e., associated with identifiers such as email addresses).
+
+#### Key metrics displayed:
+- **Total Profiles / Identified:** Displays the total number of user profiles and how many are identified.
+- **Identification Rate:** Shows the percentage of profiles that include at least one identifier.
+- **Look up profile:** A utility to search for specific profiles by identifier (e.g., Profile ID or email).
+
+Use this dashboard to quickly assess CDP coverage and effectiveness in identifying users across your data sources.
+
+---
+
+### Profile Listing
+
+This view presents a paginated table of individual user profiles.
+
+#### Table columns include:
+- **Profile ID:** The unique identifier for the profile within the CDP.
+- **Segments:** Shows which segments the profile belongs to (e.g., `has-subscribed-to-newsletter`, `binge_reader`).
+- **Created / Updated:** Timestamps for when the profile was first created and last updated.
+- **Identifiers:** Known identifiers associated with the profile (e.g., email address).
+- **Actions:** A quick access button to view or inspect the full profile details.
+
+You can filter profiles using the dropdown in the upper-right corner, which allows toggling between **All** and **Identified** profiles.
+
+This interface is useful for browsing or manually inspecting profiles to verify segmentation logic, check recent updates, or debug identity resolution.
