@@ -90,7 +90,7 @@ The profile details are divided into the following tabs:
 - **Properties**: Displays key-value pairs of profile properties, such as email, name, and custom properties like "Total pageviews", "Newsletter ID", or "Interests".
 - **Segments**: Shows which segments the profile belongs to.
 - **Events**: Lists events tied to the profile.
-- **Raw**: Shows the raw profile data in JSON format (or similar).
+- **Raw**: Shows the raw profile data in JSON format.
 
 #### Actions
 
