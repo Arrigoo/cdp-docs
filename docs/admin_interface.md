@@ -78,3 +78,29 @@ This view presents a paginated table of individual user profiles.
 You can filter profiles using the dropdown in the upper-right corner, which allows toggling between **All** and **Identified** profiles.
 
 This interface is useful for browsing or manually inspecting profiles to verify segmentation logic, check recent updates, or debug identity resolution.
+
+### Profiles – Single Profile View
+
+When you click on a profile in the listing, you are taken to a detailed profile view where all available data about that individual profile is shown.
+
+#### Tabs
+
+The profile details are divided into the following tabs:
+
+- **Properties**: Displays key-value pairs of profile properties, such as email, name, and custom properties like "Total pageviews", "Newsletter ID", or "Interests".
+- **Segments**: Shows which segments the profile belongs to.
+- **Events**: Lists events tied to the profile.
+- **Raw**: Shows the raw profile data in JSON format (or similar).
+
+#### Actions
+
+- **Back**: Returns you to the profile list.
+- **Delete profile**: Permanently deletes the profile and all associated data.
+
+> ⚠️ Deleting a profile is irreversible and should be used with caution.
+
+This view provides a complete snapshot of the profile's identity, behavior, and segmentation — crucial for support, debugging, or manual inspection tasks.
+
+
+
+
