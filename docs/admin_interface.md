@@ -101,6 +101,32 @@ The profile details are divided into the following tabs:
 
 This view provides a complete snapshot of the profile's identity, behavior, and segmentation — crucial for support, debugging, or manual inspection tasks.
 
+# Segments
 
+The **Segments** section in Arrigoo CDP lets you define and manage dynamic user segments based on user behavior and profile data.
+
+## Segment List Overview
+
+The segments overview table displays the following columns:
+
+| Column       | Description                                                                 |
+|--------------|-----------------------------------------------------------------------------|
+| **Title**    | The name of the segment (e.g., *Top reader*, *Binge reader*)               |
+| **Description** | A human-readable explanation of the segment rule logic                    |
+| **Webhooks** | Indicates if a webhook is triggered when the segment is updated      |
+| **Members**  | Number of profiles currently in the segment                                |
+| **Actions**  | View or Edit the segment definition                                    |
+
+
+## Actions
+
+- **Add segment**  
+  Use the green button in the top right to create a new segment based on filters.
+
+- **View**  
+  Opens a detailed view of the segment and its members.
+
+- **Edit**  
+  Opens the segment editor to change its logic or metadata.
 
 
