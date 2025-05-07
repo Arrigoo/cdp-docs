@@ -105,7 +105,7 @@ This view provides a complete snapshot of the profile's identity, behavior, and 
 
 The **Segments** section in Arrigoo CDP lets you define and manage dynamic user segments based on user behavior and profile data.
 
-### Segment List Overview
+### Segments Overview
 
 The segments overview table displays the following columns:
 
@@ -129,4 +129,29 @@ The segments overview table displays the following columns:
 - **Edit**  
   Opens the segment editor to change its logic or metadata.
 
+## Segment Detail Page
 
+The Segment Detail page provides detailed information and visual insights about a selected profile segment.
+
+### Overview
+
+- **Page title:**  
+  `Segment: <segment name>` 
+
+- **Charts:**
+  - **Line chart (left):**  
+    Shows the number of members added and removed from the segment over time.
+  - **Bar chart (middle):**  
+    Displays the total number of memebers in the segment and members who have left the segment.
+  - **Stat box (right):**  
+    Highlights what portion of total profiles this segment represents.  
+
+
+### Description Panel
+
+- **Content:** A plain-text description of the segment rule.  
+
+### Controls
+
+- `Edit` – Opens the segment rule editor.
+- `Back` – Returns to the segment list view.
