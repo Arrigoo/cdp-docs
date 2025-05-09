@@ -212,4 +212,37 @@ This page lists all logged events in the system with filters and details for ins
 - Filter logic supports both profile-specific and event-type-specific queries.
 - Helps developers and analysts trace and debug event flows.
 
+### Event Details Page
 
+This page displays detailed information for a single event.
+
+#### Tabs
+
+- Overview
+- Properties
+- Raw
+
+#### Overview Table
+
+| Attribute       |
+|-----------------|
+| Event created   |
+| Event ID        | 
+| Session ID      | 
+| Profile ID      | 
+| Event type      | 
+| String value    | 
+| Integer value   |
+| Topics          | 
+| Identifier      | 
+
+
+#### Buttons
+
+- **Back** – Navigates to the previous page.
+- **Delete event** – Permanently deletes the current event (red button).
+
+#### Notes
+
+- This view provides full metadata for the selected event.
+- Tabs allow switching between summary, structured properties, and raw JSON views.
