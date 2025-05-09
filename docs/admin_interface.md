@@ -164,11 +164,11 @@ This page displays and manages all defined event types in the system.
 
 | Column     | Description                                                                 |
 |------------|-----------------------------------------------------------------------------|
-| Event      | Name of the event type            |
+| Event      | Name of the event type                                                      |
 | Topics     | Whether the event is allowed to have associated topics                      |
 | String     | Rules for string properties: Allowed, Required, or Disallowed               |
 | Int        | Rules for integer properties: Allowed, Required, or Disallowed              |
-| Triggers   | Indicates what triggers are activated by this type of events                  |
+| Triggers   | Indicates what triggers are activated by this type of events                |
 | Actions    | Options to edit or delete the event type                                    |
 
 
@@ -180,5 +180,35 @@ This page displays and manages all defined event types in the system.
 
 - All editing and deletion is handled inline via the **Actions** column.
 - This overview helps maintain control over data hygiene and enforce structure in event tracking.
+
+## Event Log Page
+
+This page lists all logged events in the system with filters and details for inspection.
+
+### Filters
+
+- **Profile ID**: Text input to filter events by profile ID.
+- **Event type**: Dropdown to filter by specific event type.
+- **Search button**: Executes the filter query.
+
+### Table Columns
+
+| Column     | Description                                               |
+|------------|-----------------------------------------------------------|
+| Datetime   | Timestamp of when the event occurred                      |
+| Event Type | The type of event that was logged                         |
+| Profile ID | The unique identifier of the profile that triggered event |
+| String     | Value of the string property (if available)               |
+| Int        | Value of the integer property (if available)              |
+| Topics     | Comma-separated list of topics tied to the event          |
+| Actions    | Options to view, inspect, or delete the event             |
+
+
+### Notes
+
+- Each event can be quickly accessed and managed via the Actions column.
+- When inspecting the event, a quick raw version of the vent is displayed inline in the list.
+- Filter logic supports both profile-specific and event-type-specific queries.
+- Helps developers and analysts trace and debug event flows.
 
 
