@@ -158,9 +158,11 @@ The Segment Detail page provides detailed information and visual insights about 
 
 ## Events
 
+### Event overview page
+
 This page displays and manages all defined event types in the system.
 
-### Table Columns
+#### Table Columns
 
 | Column     | Description                                                                 |
 |------------|-----------------------------------------------------------------------------|
@@ -172,26 +174,26 @@ This page displays and manages all defined event types in the system.
 | Actions    | Options to edit or delete the event type                                    |
 
 
-### Button
+#### Button
 
 - **Add event type**: Opens a form to create a new event type.
 
-### Notes
+#### Notes
 
 - All editing and deletion is handled inline via the **Actions** column.
 - This overview helps maintain control over data hygiene and enforce structure in event tracking.
 
-## Event Log Page
+### Event Log Page
 
 This page lists all logged events in the system with filters and details for inspection.
 
-### Filters
+#### Filters
 
 - **Profile ID**: Text input to filter events by profile ID.
 - **Event type**: Dropdown to filter by specific event type.
 - **Search button**: Executes the filter query.
 
-### Table Columns
+#### Table Columns
 
 | Column     | Description                                               |
 |------------|-----------------------------------------------------------|
@@ -203,8 +205,7 @@ This page lists all logged events in the system with filters and details for ins
 | Topics     | Comma-separated list of topics tied to the event          |
 | Actions    | Options to view, inspect, or delete the event             |
 
-
-### Notes
+#### Notes
 
 - Each event can be quickly accessed and managed via the Actions column.
 - When inspecting the event, a quick raw version of the vent is displayed inline in the list.
