@@ -200,6 +200,88 @@ Payload:
 
 Note that the email is not sent as a property. Identifiers do not need a corresponding property, but then it is not available for segmentation.
 
+## Events
+
+Events can be extracted with basic filtering. They will be sorted with the latest first.
+
+```bash
+POST /v1/event-api/search
+```
+
+Payload:
+```json
+{
+    "cid": "b73884e8-a5e7-450b-83cc-572202d451d6",
+    "evt": "pageview",
+    "from": "2026-01-01T11:11",
+    "to": "2026-02-25T11:11"
+}
+```
+All parameters can be omitted.
+
+Response:
+```json
+[
+    {
+        "id": 639515,
+        "cid": "b13784e8-aee7-450b-83cc-572202d451d6",
+        "sid": 1769700277,
+        "evt": "pageview",
+        "topics": [
+            "topic1",
+            "topic2"
+        ],
+        "ctime": "2026-01-25T21:11:56Z",
+        "strval": "value",
+        "intval": 68,
+        "src": "web",
+        "url": "https://arrigoo.io/products/item1",
+        "ident": {
+            "id_type": "",
+            "id_value": ""
+        }
+    },
+    {
+        "id": 639406,
+        "cid": "b13784e8-aee7-450b-83cc-572202d451d6",
+        "sid": 1769700279,
+        "evt": "pageview",
+        "topics": [
+            "topic1",
+            "topic2"
+        ],
+        "ctime": "2026-01-22T13:40:00Z",
+        "strval": "value",
+        "intval": 73,
+        "src": "web",
+        "url": "https://arrigoo.io/login",
+        "ident": {
+            "id_type": "",
+            "id_value": ""
+        }
+    },
+   ...
+    {
+        "id": 639494,
+        "cid": "b13784e8-aee7-450b-83cc-572202d451d6",
+        "sid": 1769700277,
+        "evt": "pageview",
+        "topics": [
+            "topic1",
+            "topic2"
+        ],
+        "ctime": "2025-10-31T10:41:19Z",
+        "strval": "value",
+        "intval": 73,
+        "src": "web",
+        "url": "https://arrigoo.io/register",
+        "ident": {
+            "id_type": "",
+            "id_value": ""
+        }
+    }
+]
+
 ## Statistics
 
 The statistics for the dashboard and numbers displayed in the interface are all available through the API.
