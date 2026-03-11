@@ -3,3 +3,4 @@
 * [Trackingscript](docs/trackingscript.md)
 * [API](docs/api.md)
 * [Admin interface](docs/admin_interface.md)
+* [MCP API](docs/mcp-api.md)
