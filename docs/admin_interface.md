@@ -13,11 +13,20 @@ This documentation provides an overview of each part of the admin interface, inc
 The left-hand sidebar provides quick access to all major features in the admin interface:
 
 - **Dashboard** – Overview of key metrics and system activity
-- **Profiles** – Search, view, and manage individual user profiles
+- **Data** 
+  - *Profiles* – Search, view, and manage individual user profiles
+  - *Events* – Explore and analyze captured user activity
 - **Segments** – Build and maintain audience segments based on behavior or attributes
-- **Events** – Explore and analyze captured user activity
-- **Properties** – Define and manage custom attributes for profiles and events
 - **Actions** – Set up automations such as audience syncing or triggered workflows
+- **Integrations**
+  - *Profile API* - Import profiles on a schedule or manually triggered.
+  - *Profile endpoints* - Receive profile updates as webhooks.
+  - *Event endpoints* - Receive and remap events from other systems.
+- **Configuration**
+  - *Properties* – Define and manage custom attributes for profiles and events
+  - *Event types* - Specify the event types to receive.
+  - *Connections* - Predefined connections for use in actions and API integrations.
+
 - **Integrations** – Connect to third-party systems like CRMs, email platforms, or analytics tools
 
 ## Dashboard
@@ -49,11 +58,13 @@ A stacked bar chart visualizing the volume and variety of events logged daily.
 - Each color in the stack corresponds to a different event type
 - Useful for identifying behavior trends and validating data capture
 
-## Profiles
+## Data
+
+### Profiles
 
 The **Profiles** section gives you access to all the user profiles stored in the CDP. It is divided into two main views: a high-level dashboard overview and a detailed profile listing.
 
-### Profile Dashboard
+#### Profile Dashboard
 
 The dashboard provides a quick summary of the total number of profiles and how many of them have been identified (i.e., associated with identifiers such as email addresses).
 
@@ -64,20 +75,9 @@ The dashboard provides a quick summary of the total number of profiles and how m
 
 Use this dashboard to quickly assess CDP coverage and effectiveness in identifying users across your data sources.
 
-### Profile Listing
+### Browse Profiles
 
-This view presents a paginated table of individual user profiles.
-
-#### Table columns include:
-- **Profile ID:** The unique identifier for the profile within the CDP.
-- **Segments:** Shows which segments the profile belongs to (e.g., `has-subscribed-to-newsletter`, `binge_reader`).
-- **Created / Updated:** Timestamps for when the profile was first created and last updated.
-- **Identifiers:** Known identifiers associated with the profile (e.g., email address).
-- **Actions:** A quick access button to view or inspect the full profile details.
-
-You can filter profiles using the dropdown in the upper-right corner, which allows toggling between **All** and **Identified** profiles.
-
-This interface is useful for browsing or manually inspecting profiles to verify segmentation logic, check recent updates, or debug identity resolution.
+Search for profiles and discover the number of profiles that matches combinations of property- end segment conditions. Useful for getting an idea of how to configure segments.
 
 ### Profiles – Single Profile View
 
@@ -92,44 +92,22 @@ The profile details are divided into the following tabs:
 - **Events**: Lists events tied to the profile.
 - **Raw**: Shows the raw profile data in JSON format.
 
-#### Actions
-
-- **Back**: Returns you to the profile list.
-- **Delete profile**: Permanently deletes the profile and all associated data.
-
 > ⚠️ Deleting a profile is irreversible and should be used with caution.
 
-This view provides a complete snapshot of the profile's identity, behavior, and segmentation — crucial for support, debugging, or manual inspection tasks.
+### Event Log Page
+
+This page lists all logged events in the system with filters and details for inspection.
+#### Filters
+
+- **Profile ID**: Text input to filter events by profile ID.
+- **Event type**: Dropdown to filter by specific event type.
+- **Search button**: Executes the filter query.
 
 ## Segments
 
 The **Segments** section in Arrigoo CDP lets you define and manage dynamic user segments based on user behavior and profile data.
 
-### Segments Overview
-
-The segments overview table displays the following columns:
-
-| Column       | Description                                                                 |
-|--------------|-----------------------------------------------------------------------------|
-| **Title**    | The name of the segment (e.g., *Top reader*, *Binge reader*)               |
-| **Description** | A human-readable explanation of the segment rule logic                    |
-| **Webhooks** | Indicates if a webhook is triggered when the segment is updated      |
-| **Members**  | Number of profiles currently in the segment                                |
-| **Actions**  | View or Edit the segment definition                                    |
-
-
-### Actions
-
-- **Add segment**  
-  Use the green button in the top right to create a new segment based on filters.
-
-- **View**  
-  Opens a detailed view of the segment and its members.
-
-- **Edit**  
-  Opens the segment editor to change its logic or metadata.
-
-## Segment Detail Page
+### Segment Detail Page
 
 The Segment Detail page provides detailed information and visual insights about a selected profile segment.
 
@@ -144,105 +122,10 @@ The Segment Detail page provides detailed information and visual insights about 
   - **Bar chart (middle):**  
     Displays the total number of memebers in the segment and members who have left the segment.
   - **Stat box (right):**  
-    Highlights what portion of total profiles this segment represents.  
-
-
-### Description Panel
-
-- **Content:** A plain-text description of the segment rule.  
-
-### Controls
-
-- `Edit` – Opens the segment rule editor.
-- `Back` – Returns to the segment list view.
+    Highlights what portion of total profiles this segment represents.   
 
 ## Events
 
-### Event overview page
+### Event type overview page
 
 This page displays and manages all defined event types in the system.
-
-#### Table Columns
-
-| Column     | Description                                                                 |
-|------------|-----------------------------------------------------------------------------|
-| Event      | Name of the event type                                                      |
-| Topics     | Whether the event is allowed to have associated topics                      |
-| String     | Rules for string properties: Allowed, Required, or Disallowed               |
-| Int        | Rules for integer properties: Allowed, Required, or Disallowed              |
-| Triggers   | Indicates what triggers are activated by this type of events                |
-| Actions    | Options to edit or delete the event type                                    |
-
-
-#### Button
-
-- **Add event type**: Opens a form to create a new event type.
-
-#### Notes
-
-- All editing and deletion is handled inline via the **Actions** column.
-- This overview helps maintain control over data hygiene and enforce structure in event tracking.
-
-### Event Log Page
-
-This page lists all logged events in the system with filters and details for inspection.
-
-#### Filters
-
-- **Profile ID**: Text input to filter events by profile ID.
-- **Event type**: Dropdown to filter by specific event type.
-- **Search button**: Executes the filter query.
-
-#### Table Columns
-
-| Column     | Description                                               |
-|------------|-----------------------------------------------------------|
-| Datetime   | Timestamp of when the event occurred                      |
-| Event Type | The type of event that was logged                         |
-| Profile ID | The unique identifier of the profile that triggered event |
-| String     | Value of the string property (if available)               |
-| Int        | Value of the integer property (if available)              |
-| Topics     | Comma-separated list of topics tied to the event          |
-| Actions    | Options to view, inspect, or delete the event             |
-
-#### Notes
-
-- Each event can be quickly accessed and managed via the Actions column.
-- When inspecting the event, a quick raw version of the vent is displayed inline in the list.
-- Filter logic supports both profile-specific and event-type-specific queries.
-- Helps developers and analysts trace and debug event flows.
-
-### Event Details Page
-
-This page displays detailed information for a single event.
-
-#### Tabs
-
-- Overview
-- Properties
-- Raw
-
-#### Overview Table
-
-| Attribute       |
-|-----------------|
-| Event created   |
-| Event ID        | 
-| Session ID      | 
-| Profile ID      | 
-| Event type      | 
-| String value    | 
-| Integer value   |
-| Topics          | 
-| Identifier      | 
-
-
-#### Buttons
-
-- **Back** – Navigates to the previous page.
-- **Delete event** – Permanently deletes the current event (red button).
-
-#### Notes
-
-- This view provides full metadata for the selected event.
-- Tabs allow switching between summary, structured properties, and raw JSON views.
