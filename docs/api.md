@@ -162,44 +162,6 @@ NB: The segment is identified by the system title, not the ID.
 ]
 ```
 
-### Update or create a new profile
-
-Requires admin or above. Create or update properties and identifiers directly on a profile. The identifier(s) supplied as `ident` will be used to look up the customer.
-
-**Important update rules:**
-
-* If two identifiers are suppplied and one of them matches an existing profile, the other will be updated.
-* If two identifiers are suppplied and they match two different profiles, an error will be thrown.
-* It is possible to update a dynamic property. This means that it can be overridden by incoming events. This may be desireable in certain situations and is thus not considered a bug.
-
-```bash
-PUT /v1/customer
-```
-
-Payload:
-
-```json
-{
-    "ident": [
-        {
-            "id_type": "email",
-            "id_value": "bib@bob.dk"
-        },
-        {
-            "id_type": "foreignid1",
-            "id_value": "ytrewq"
-        }
-    ],
-    "properties": {
-            "name": "Bib Bobsen",
-            "subscription_id": "ytrewq"
-    }
-}
-
-```
-
-Note that the email is not sent as a property. Identifiers do not need a corresponding property, but then it is not available for segmentation.
-
 ## Events
 
 Events can be extracted with basic filtering. They will be sorted with the latest first.
