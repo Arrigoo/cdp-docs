@@ -4,20 +4,6 @@ The frontend tracking script for the Arrigoo CDP essentially adds an object to t
 
 Essentially, it configures and sends events to the CDP, stores the returned data and dispatches browser events on the window.document object. 
 
-To access the profile data, you can call:
-
-```javascript
-window.argo.segments()
-```
-
-To get an array of the segments, the profile is connected to.
-
-```javascript
-window.argo.property(<property system title>);
-```
-
-To get the value of a single property.
-
 ## Recognizing profiles
 
 Profiles can be recognized in three ways:
@@ -31,6 +17,7 @@ Profiles can be recognized in three ways:
 ## Events on window.document
 
 The events introduced are:
+
 `ao_loaded`: When the script is loaded and ready for interaction.
 
 `ao_event_sent`: Dispatched whenever an event has been sent to the CDP.
@@ -57,9 +44,6 @@ The third parameter allows for overriding all attributes on the event. See inter
 window.argo.send('pageview', 'page-cms-id', {intval: 123, src: window.location.hash}
 ```
 
-`getFullProfile()`
-Returns the full profile as JSON.
-
 `set(key: string, value: any)`
 Override a default value on the initial event. See specifications for keys and value type in the interface definition. Useful for setting e.g. topics on the pageview event:
 
@@ -69,6 +53,35 @@ Sets an identifier on the initial event.
 ```javascript
  window.argo.set(‘topics’, [‘news’, ‘table tennis’])
 ```
+
+
+```javascript
+window.argo.segments()
+```
+
+To get an array of the segments, the profile is connected to.
+
+```javascript
+window.argo.property(<property system title>);
+```
+
+To get the value of a single property.
+
+```javascript
+window.argo.getFullProfile()
+
+// Returns the full profile as JSON.
+{
+  "cid": "dgkjhsdfg-fhfgh-gfhdf..", // CDP customer ID
+  "p": [
+    { "lab": "<property label/system title>", "val": "<property value>" },
+    { "lab": "<property label/system title>", "val": "<property value>" }
+  ],
+  "s": ["segment1", "segment2"]
+}
+```
+
+
 
 ## Event properties and defaults
 **cid** 
