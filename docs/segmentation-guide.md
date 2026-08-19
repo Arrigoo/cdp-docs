@@ -90,19 +90,22 @@ property tools work on all of them.
 | Source | Which system sent it | `webshop`, `crm`, `newsletter` |
 | URL | The page it relates to | The article or product page |
 
-### Choosing Allowed vs Required
+### Choosing Allowed, Required or Disallowed
 
 - **Allowed** — the field may be present or absent. Use when it genuinely varies.
 - **Required** — the event is rejected if the field is missing.
+- **Disallowed** — the event is rejected if the field *is* present.
 
 Set a field to **Required** whenever a property will depend on it. If your "Total spend"
 property reads the Integer Value of purchase events, marking Integer Value as Required
 means a broken sender fails loudly and immediately, rather than quietly producing wrong
 segment membership that nobody notices for weeks.
 
-> **Caution:** the dropdown also offers **Disallowed**. It does not currently work as its
-> name suggests — an event type saved with Disallowed behaves as though the field were
-> Required. Use Allowed or Required only, until this is corrected.
+**Disallowed** is the least used of the three, but it is worth knowing about: it stops a
+field being filled in with something meaningless. If your `newsletter_signup` events have no
+sensible number to carry, marking Integer Value as Disallowed prevents a well-meaning
+developer from putting a timestamp or a `1` there — which would otherwise get silently
+summed by any property that later reads those events.
 
 ### Planning your event vocabulary
 
@@ -213,6 +216,7 @@ events further.
 | Condition | What it does |
 |---|---|
 | **Max Age (Days)** | Only count events from the last N days. Leave unset for no limit. |
+| **Minimum Age (Days)** | Only count events *older* than N days. Combine with Max Age for a window such as "between 30 and 90 days ago". |
 | **String Values** | Only count events whose String Value matches one of these. |
 | **Topic Contains** | Only count events with one of these topics. |
 | **Source** | Only count events from one of these source systems. |
@@ -267,6 +271,17 @@ message. Test your patterns by checking a known profile rather than assuming the
 - Event Types to Match: `email_click`
 - String Values: `~^2026-\d{2}-`
 
+*Purchases from the previous quarter only — between 30 and 120 days ago:*
+
+- Event Types to Match: `purchase`
+- Minimum Age (Days): `30`
+- Max Age (Days): `120`
+
+The last one is worth dwelling on. Pairing Minimum Age with Max Age gives you a *window*
+rather than a "last N days" period, which is what you need to compare one period against
+another — build the same property twice with different windows, then use a Calculation to
+subtract one from the other and you have a like-for-like change measure.
+
 ### 4.5 Group Field — how events are bucketed
 
 Found under **Property Value Processing**, the **Group Field** decides what the events are
@@ -282,6 +297,7 @@ they spend" and "how much did they spend *per category*".
 | **Session** | The visit | One bucket per session |
 | **Source** | The sending system | One bucket per source |
 | **Referrer** | Where the visitor came from | One bucket per referrer |
+| **URL** | The page address | One bucket per page |
 
 If you choose anything other than **Total**, you will usually want the Value Type to be
 **Map/Object**, because the result is a set of labelled numbers rather than one number.
@@ -291,10 +307,6 @@ lands in *every* one of its topic buckets. A purchase of 1,299 kr tagged both "o
 "footwear" adds 1,299 to both. The buckets therefore add up to more than the true total —
 which is exactly right for measuring *affinity per topic*, and exactly wrong if you wanted
 a total. Use Total grouping for totals.
-
-> **Note:** the Group Field list also contains **URL**. This option is not currently
-> functional and will produce an empty property. To analyse by URL, use a String List
-> property with Event Field Source set to URL instead.
 
 ### 4.6 Accumulator — how the values are combined
 
@@ -310,6 +322,8 @@ a bucketed **Map/Object**.
 | **Sum per grouping item** | The Integer Values added together |
 | **Count per grouping item** | How many events fell into the bucket |
 | **Average per grouping item** | The average Integer Value in that bucket |
+| **Max value per grouping item** | The highest Integer Value in that bucket |
+| **Min** | The lowest Integer Value in that bucket |
 
 *Example — spend per category:* Group Field **Topics**, Accumulator **Sum per grouping
 item**, Value Type **Map/Object**. Result: outdoor 8,400 · footwear 2,100 · camping 950.
@@ -324,20 +338,23 @@ item**, Value Type **Map/Object**. Result: outdoor 8,400 · footwear 2,100 · ca
 | **Single number average of value** | The same — total value divided by number of events |
 | **Single number average of count** | Average number of events per group |
 | **Count of group items** | How many *different* buckets there were |
+| **Max value per grouping item** / **Single number max value** | The highest single Integer Value across all matching events |
+| **Min** | The lowest single Integer Value across all matching events |
 
-The last two are the reason to combine a **Number** value type with a Group Field other
-than Total:
+**Single number average of count** and **Count of group items** are the reason to combine a
+**Number** value type with a Group Field other than Total:
 
 - **Count of group items** grouped by **String value** = "how many different products have
   they bought"
 - **Count of group items** grouped by **Session** = "how many visits have they made"
 - **Single number average of count** grouped by **Session** = "average page views per visit"
 
-> **Caution:** the list also offers **Max value per grouping item**, **Min**, and **Single
-> number max value**. These do not currently work for single **Number** properties — the
-> result will be `0`. Do not build segments on them. To find someone's largest single order,
-> build a **Map/Object** grouped by String value and read the top entry with a **Top Value**
-> property.
+**Max** and **Min** behave differently from the rest: they ignore the grouping and report
+the single highest or lowest Integer Value across every matching event. On a **Number**
+property this gives you "their largest ever order" or "their cheapest purchase" directly.
+On a **Map/Object** property the same setting reports the highest or lowest value *within
+each bucket* — so grouped by Topics, "the biggest single order they placed in each
+category".
 
 ### 4.7 Thresholds — requiring a minimum before the property exists
 
@@ -554,7 +571,6 @@ If the property is missing or wrong:
 | Missing on every profile | No events match. Check Event Types to Match first, then your text filters. |
 | Missing on some profiles | A threshold is removing it — Min Occurrences, or an Accumulated Value limit. |
 | Missing, and it is a derived property | The source property is missing on that profile. |
-| The value is `0` on a Number property | The Accumulator is Max, Min or Single number max — see the caution in [4.6](#46-accumulator--how-the-values-are-combined). |
 | The value is right but out of date | The recalculation has not run since the events arrived. Wait a minute and refresh. |
 | A Map/Object property is empty | Every bucket was excluded by the Accumulated Value thresholds. |
 
