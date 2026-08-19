@@ -1,6 +1,12 @@
 # Documentation for the Arrigoo CDP
 
+## Guidelines and best practice
+
+* [Integration guide](docs/integration-guide.md)
+* [Integration guide](docs/segmentation-guide.md)
+
+## More technical descriptions
+
 * [Trackingscript](docs/trackingscript.md)
 * [API](docs/api.md)
-* [Admin interface](docs/admin_interface.md)
 * [MCP API](docs/mcp-api.md)
