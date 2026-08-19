@@ -3,7 +3,7 @@
 ## Guidelines and best practice
 
 * [Integration guide](docs/integration-guide.md)
-* [Integration guide](docs/segmentation-guide.md)
+* [Segmentation guide](docs/segmentation-guide.md)
 
 ## More technical descriptions
 
