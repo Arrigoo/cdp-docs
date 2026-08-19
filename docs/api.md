@@ -1,4 +1,4 @@
-# Arrigoo CDP API
+# Arrigoo CDP API endpoints
 
 ## Authentication
 
