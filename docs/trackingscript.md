@@ -54,6 +54,7 @@ Sets an identifier on the initial event.
  window.argo.set(‘topics’, [‘news’, ‘table tennis’])
 ```
 
+Set a value on the initial event.
 
 ```javascript
 window.argo.segments()
@@ -81,9 +82,8 @@ window.argo.getFullProfile()
 }
 ```
 
-
-
 ## Event properties and defaults
+
 **cid** 
 internal CDP ID, returned from the server if not present in local storage.
 
@@ -109,7 +109,39 @@ New session. The profile information is stored in the browsers session storage
 **url**
 `window.location.href`. Can be manipulated on the send event in case you want to remove query parameters or something.
 
+**strval**
+A string carried by the event.
+
+**intval**
+An integer carried by the event.
+
+**topics**
+A list of strings for tagging the event.
+
+## Basic setup
+
+To get started, insert the following in your page head:
+
+```javascript
+<script>
+    window.arrigooHost = 'your-cdp-domain.agillic.io'; 
+</script>
+<script src='https://your-cdp-domain.agillic.io/arrigoo.js'></script>
+<script>
+    window.document.addEventListener(
+        'ao_loaded', 
+        function(evt) {
+            // Custom logic
+            // ... 
+            window.argo.sendInitEvent();
+        }, false);
+</script>
+```
+
+Add further details to the events by adding product-/article ID or trigger `send('<event type>')` on the triggers you need.
+
 ## Interfaces
+
 The primary interfaces to know are for the profile and the event. For reference.
 
 ```javascript
