@@ -44,6 +44,9 @@ The third parameter allows for overriding all attributes on the event. See inter
 window.argo.send('pageview', 'page-cms-id', {intval: 123, src: window.location.hash}
 ```
 
+`sendContext(event: string, strval: string, context: object, eventOverrides?: Partial<EventInterface>)`
+For sending a context event: a regular event carrying a nested object of extra data such as an order with its products. See the section on context events below.
+
 `set(key: string, value: any)`
 Override a default value on the initial event. See specifications for keys and value type in the interface definition. Useful for setting e.g. topics on the pageview event:
 
@@ -118,6 +121,40 @@ An integer carried by the event.
 **topics**
 A list of strings for tagging the event.
 
+## Context events
+
+A context event is a regular event with an extra `context` object attached, for cases where the string value, integer value and topics are not enough: a purchase with its order lines, a search with its filters, a booking with its travel details. The context is stored with the event and can feed calculated properties and segments.
+
+Send one with `sendContext`. The parameters are the event type, the string value, the context object and, optionally, overrides for the other event fields, just as for `send`:
+
+```javascript
+window.argo.sendContext('purchase', 'order-8812', {
+  order_id: 'order-8812',
+  currency: 'DKK',
+  products: [
+    { sku: 'df', price: 2.25, qty: 1 },
+    { sku: 'abc', price: 132.25, qty: 2 }
+  ],
+  shipping: { method: 'pickup', cost: 0 }
+}, { topics: ['checkout'] });
+```
+
+The event is posted to `/event/context` instead of `/event`, and the response and the browser events are the same as for `send`.
+
+### Requirements
+
+- The event type must be registered in the CDP as a **context event**. Sending a context to a regular event type, or a context event type through `send`, is rejected.
+- The event type's specification lists the context keys with their type (string, integer, decimal or boolean) and whether they are mandatory, optional or not allowed. Keys the specification does not mention are accepted and stored as they are. A missing mandatory key or a value of the wrong type rejects the event.
+- Leaf values must be strings, numbers or booleans. Objects and arrays can be nested freely, up to 8 levels deep. Null values are dropped.
+- Field names must not contain `.` or `@`; these are reserved for the key notation below.
+- Limits per event: at most 200 leaf values, keys of at most 128 characters once flattened, strings of at most 1024 characters.
+
+### Key notation
+
+Inside the CDP the context is flattened to one key per leaf value. Nested objects are joined with `.` and array elements with `@` followed by the index, so the example above is stored as `order_id`, `currency`, `products@0.sku`, `products@0.price`, `products@1.sku`, `shipping.method` and so on. This is the notation used when configuring the event type specification, calculated properties and segments, with `*` standing in for any array index: `products@*.price` refers to the price of every product.
+
+When a calculated property reads such a key, every matching array element counts as an event of its own. A property summing `products@*.price` over purchase events adds up every product of every purchase, and grouping on `products@*.sku` pairs each price with the product it belongs to.
+
 ## Basic setup
 
 To get started, insert the following in your page head:
@@ -158,6 +195,7 @@ export interface EventI {
    ns?: boolean; // New session
    ref?: string; // Referrer
    ident?: IdentifierValueI; // Identifier to look up a user instantly and return the profile with the response. The value is not recorded and cannot be used for merging.
+   context?: Record<string, unknown>; // Nested payload of a context event. Set by sendContext, see the context events section.
 }
 
 
