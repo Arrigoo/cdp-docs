@@ -157,11 +157,11 @@ When a calculated property reads such a key, every matching array element counts
 
 ## Basic setup
 
-To get started, insert the following in your page head:
+To get started using basic events, insert the following in your page head:
 
 ```javascript
 <script>
-    window.arrigooHost = 'your-cdp-domain.agillic.io'; 
+    window.arrigooHost = 'https://your-cdp-domain.agillic.io'; 
 </script>
 <script src='https://your-cdp-domain.agillic.io/arrigoo.js'></script>
 <script>
@@ -175,7 +175,9 @@ To get started, insert the following in your page head:
 </script>
 ```
 
-Add further details to the events by adding product-/article ID or trigger `send('<event type>')` on the triggers you need.
+Add further details to the events by adding product-/article ID or trigger `send('<event type>')` or `sendContext('<event type>', 'string', {..})`  on the triggers you need. 
+
+You can host the js file locally if you prefer. It is just a plain JS file.
 
 ## Interfaces
 
