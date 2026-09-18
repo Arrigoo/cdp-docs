@@ -392,3 +392,333 @@ Monthly event stats.
     ]
 }
 ```
+
+## Configuration: properties, segments and event types
+
+The definitions behind the data — properties, segments and event types — can also be read
+and created through the API.
+
+Note what an API key may do here. Looking things up works with any API key. **Creating**
+only works for event types; `POST /v1/property` and `POST /v1/segment` are answered with
+`403 Forbidden` for every API key, whatever its role, and can currently only be done from
+the admin interface. Changing and deleting definitions (`PUT` and `DELETE`) is closed to
+API keys as well.
+
+| Endpoint | What it does | Available to an API key |
+|---|---|---|
+| `GET /v1/property` | All property definitions | Yes |
+| `GET /v1/property/{label}` | One property, by its label | Yes |
+| `POST /v1/property` | Create a property | No |
+| `GET /v1/segment` | All segment definitions | Yes |
+| `GET /v1/segment/{id}` | One segment, by its numeric ID | Yes |
+| `POST /v1/segment` | Create a segment | No |
+| `GET /v1/event-spec` | All event types | Yes |
+| `POST /v1/event-spec` | Create an event type | Yes |
+
+For what the fields mean and how to choose them, see the
+[segmentation guide](../segmentation-guide-tech.md).
+
+### Properties
+
+```bash
+GET /v1/property
+```
+
+**Response:**
+
+```json
+[
+    {
+        "id": 12,
+        "label": "Total spend, 365 days",
+        "sys_title": "total_spend_365d",
+        "value_type": "int",
+        "description": "Sum of purchase amounts over the past year",
+        "identifier_type": "",
+        "identifier_merge": false,
+        "protected": false,
+        "protected_content": false,
+        "count": 4348,
+        "event_requirements": [
+            {
+                "property": 12,
+                "event_type": ["purchase"],
+                "accumulator": "sum",
+                "max_age": 365
+            }
+        ]
+    },
+    ...
+]
+```
+
+`count` is the number of profiles that currently hold a value for the property. It is updated every 15 minutes. The
+`event_requirements` block is the recipe that turns events into the value; it is described
+in full in the segmentation guide. `identifier_type` is set on the few string properties
+that double as a profile identifier (`email`, `phone`, `foreignid1-3`, `agillic_id`) and is
+empty on all others.
+
+A single property is looked up by its label, not its system title:
+
+```bash
+GET /v1/property/Total%20spend,%20365%20days
+```
+
+Create a property by posting the same structure. `label`, `sys_title` and `value_type` are
+the required parts:
+
+```bash
+POST /v1/property
+Body:
+{
+    "label": "Articles read, 90 days",
+    "sys_title": "articles_read_90d",
+    "value_type": "int",
+    "description": "Number of article pageviews in the past 90 days",
+    "event_requirements": [
+        {
+            "event_type": ["pageview"],
+            "accumulator": "count",
+            "max_age": 90
+        }
+    ]
+}
+```
+
+The response is the stored property, including the `id` it was given. Use that ID when you
+reference the property in a segment condition.
+
+Labels must be unique. A `POST` with a label an existing property already uses is rejected
+with `409 Conflict` and an explanation:
+
+```json
+{
+    "error": "A property with the label \"Articles read, 90 days\" already exists"
+}
+```
+
+A property with no label is rejected with `400 Bad Request`. The `sys_title` is not checked
+the same way, so look the property list up first if you are not sure whether the system
+name is taken.
+
+### Segments
+
+```bash
+GET /v1/segment
+```
+
+**Response:**
+
+```json
+[
+    {
+        "id": 7,
+        "title": "High value outdoor customers",
+        "sys_title": "high_value_outdoor",
+        "description": "Spent over 5,000 in the last year with outdoor affinity",
+        "properties": [12, 19],
+        "conditions": [
+            { "pt": 12, "rt": "", "field": "int",  "op": ">",         "v1": "500000", "v2": "" },
+            { "pt": 19, "rt": "", "field": "strs", "op": "intersect", "v1": "[\"outdoor\"]", "v2": "" }
+        ]
+    },
+    ...
+]
+```
+
+A single segment is looked up by its numeric ID, not its system title:
+
+```bash
+GET /v1/segment/7
+```
+
+(The endpoint that lists the profiles in a segment, `GET /v1/customer/segment/{sys_title}`,
+uses the system title instead. See [Profile data](#profile-data).)
+
+Create a segment by posting the same structure without an ID:
+
+```bash
+POST /v1/segment
+Body:
+{
+    "title": "Engaged readers",
+    "sys_title": "engaged_readers",
+    "description": "Read at least 10 articles in the past 90 days",
+    "conditions": [
+        { "pt": 31, "field": "int", "op": ">", "v1": "10" }
+    ]
+}
+```
+
+Each condition names a property by its ID in `pt`, the property's value type in `field`, an
+operator in `op`, and one or two values in `v1` and `v2` (`v2` only for `between`). All
+conditions must match for a profile to be in the segment.
+
+The response repeats what you sent; it does not include the new ID. Read the segment list
+again to get it.
+
+### Event types
+
+```bash
+GET /v1/event-spec
+```
+
+**Response:**
+
+```json
+[
+    {
+        "evt": "purchase",
+        "description": "A completed order",
+        "topics": 1,
+        "strval": 1,
+        "intval": 1,
+        "protected": false,
+        "protected_content": false,
+        "context_event": false,
+        "context_spec": null
+    },
+    ...
+]
+```
+
+An event type must exist before events of that type are accepted; events with an unknown
+type are rejected.
+
+```bash
+POST /v1/event-spec
+Body:
+{
+    "evt": "newsletter_signup",
+    "description": "Signed up for a newsletter",
+    "topics": 0,
+    "strval": 1,
+    "intval": -1
+}
+```
+
+`topics`, `strval` and `intval` say what an event of this type must carry:
+
+| Value | Meaning |
+|---|---|
+| `1` | Required. An event without the field is rejected. |
+| `0` | Optional. The field may be present or absent. |
+| `-1` | Disallowed. The field must be empty or the event is rejected. |
+
+`protected` keeps the event type out of general read surfaces, including the MCP, and
+`protected_content` keeps the event's content back where the type is still listed. Both
+default to `false`.
+
+Posting an event type that already exists overwrites the stored definition, so the same
+call both creates and updates.
+
+#### Context events
+
+A normal event carries three pieces of data: `topics`, `strval` and `intval`. That is
+enough for "viewed article X" but not for "bought these four items at these prices". A
+**context event** adds a nested JSON object, so the whole payload arrives as one event.
+
+Two things set a context event apart:
+
+- The event type is declared with `"context_event": true`, and `context_spec` describes the
+  keys the payload may carry.
+- Events of that type are sent to `POST /v1/event/context` instead of `POST /v1/event`. The
+  two are not interchangeable: a context event type is rejected on the basic endpoint, and
+  the context endpoint rejects a type that is not a context event.
+
+Declare the event type first:
+
+```bash
+POST /v1/event-spec
+Body:
+{
+    "evt": "purchase",
+    "description": "A completed order with its order lines",
+    "topics": 0,
+    "strval": 1,
+    "intval": 1,
+    "context_event": true,
+    "context_spec": {
+        "order_id":            { "required": 1, "type": "string" },
+        "currency":            { "required": 1, "type": "string" },
+        "products@*.sku":      { "required": 1, "type": "string" },
+        "products@*.price":    { "required": 1, "type": "float" },
+        "products@*.quantity": { "required": 0, "type": "int" },
+        "customer.vip":        { "required": 0, "type": "bool" }
+    }
+}
+```
+
+Then send the event:
+
+```bash
+POST /v1/event/context
+Body:
+{
+    "evt": "purchase",
+    "cid": "b73884e8-a5e7-450b-83cc-572202d451d6",
+    "strval": "order-10093",
+    "intval": 74900,
+    "src": "web",
+    "context": {
+        "order_id": "10093",
+        "currency": "DKK",
+        "products": [
+            { "sku": "AB-100", "price": 499.00, "quantity": 1 },
+            { "sku": "CD-220", "price": 250.00, "quantity": 2 }
+        ],
+        "customer": { "vip": true }
+    }
+}
+```
+
+The response is the same as for a basic event. A payload that breaks the schema is rejected
+with `400 Bad Request` and a message naming the key:
+
+```json
+{
+    "error": "context key \"products@1.price\": must be of type string"
+}
+```
+
+##### Writing the context schema
+
+Each entry in `context_spec` is a key pattern with a requirement and a type.
+
+The pattern is the path to the value. Object levels are joined with `.`, and array elements
+are written with `@`: `@0` for one specific position, `@*` for any position. So
+`products@*.price` covers `products@0.price`, `products@1.price` and so on.
+
+`required` works exactly like `topics`, `strval` and `intval`:
+
+| Value | Meaning |
+|---|---|
+| `1` | Required. At least one value must match the pattern. |
+| `0` | Optional. |
+| `-1` | Disallowed. No value may match the pattern. |
+
+`type` is one of `string`, `int`, `float` or `bool`, and every matching value must be of
+that type. Whole numbers are stored as integers however they were written, so `499.00` is
+an integer like `499` is. A value declared as `float` accepts whole numbers too, while one
+declared as `int` rejects anything with a decimal part — so declare prices and other
+amounts that can have decimals as `float`.
+
+Keys the schema does not mention are stored as sent and not validated. Declaring the keys
+you rely on means a sender that changes its payload fails immediately instead of quietly
+producing empty properties.
+
+A payload is limited to 200 values in total, 8 levels of nesting, keys of 128 characters
+and strings of 1024 characters. Values must be strings, numbers or booleans; `null` is
+dropped.
+
+##### Using the context in properties
+
+A property reads a context value by prefixing the pattern with `context.`, for example
+`context.products@*.price` as the value or the group field of an event requirement. That is
+what makes the payload useful: one `purchase` event can feed spend per product category, a
+list of bought SKUs and an order count at the same time. The segmentation guide covers the
+property side.
+
+Events are returned with their context nested again, the way you sent it, so
+`POST /v1/event-api/search` gives back the `context` object rather than the flat keys the
+server stores internally.
