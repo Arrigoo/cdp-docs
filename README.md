@@ -11,3 +11,4 @@
 * [Roles](docs/access-and-roles.md)
 * [API](docs/api.md)
 * [MCP API](docs/mcp-api.md)
+* [Hosting and operations](docs/hosting-and-operations.md)
