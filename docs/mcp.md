@@ -23,6 +23,10 @@ Every request to `/v1/mcp` needs a bearer token in the `Authorization: Bearer <t
 
 Before handing out an MCP key, make sure sensitive properties have **Protected Content** enabled and that event types you don't want exposed are marked as protected.
 
+### Limiting the tools
+
+**Account → MCP** holds the MCP settings. Only super admins can open it. Tick **Hide CDP tools** and click **Save** to offer MCP clients only the Agillic tools and the activity statistics (`get_activity_stats`, `get_email_activity_stats`). The profile, segment, event and inventory tools are then left out of `tools/list` and `GET /v1/mcp`, and calling one of them returns `Unknown tool`. Clients see the change the next time they list the tools. Untick the box and save again to offer every tool.
+
 There are two ways to connect an MCP client.
 
 ### Browser authentication
@@ -151,7 +155,7 @@ Returns server info and capabilities. Call this first to confirm the connection.
 
 ### `tools/list`
 
-Returns the list of available tools with their input schemas.
+Returns the list of available tools with their input schemas. The Agillic tools are only listed when an Agillic connection exists, and **Hide CDP tools** limits the list (see [Limiting the tools](#limiting-the-tools)).
 
 **Request:**
 ```json
@@ -448,6 +452,24 @@ List all property definitions with `sys_title`, label, value type, identifier ma
 
 ---
 
+### `get_email_activity_stats` and `get_activity_stats`
+
+Sum Agillic activity statistics: sends, opens, clicks, SMS deliveries, link clicks, page visits and so on, counted per hour. `get_email_activity_stats` covers email and transactional email. `get_activity_stats` covers the other activity types: SMS, inbound SMS, push, print, Facebook and Google audiences, link clicks, events, promotions and page visits. The data comes from the Agillic activity exports; see [Agillic activity data](agillic-activity.md) for the setup and what the numbers mean.
+
+**Arguments:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `group_by` | `[]string` | No | Keys to count by. Both tools: `connection_key`, `flow`, `step`, `status`, `hour_ts`, `day`, `weekday`, `hour`. Email only: `transactional`. Other activity only: `export_type`, `channel`. Omit for a single total. |
+| `filters` | `object` | No | Key → accepted values, e.g. `{"flow": ["Welcome"], "weekday": ["6", "7"]}`. |
+| `from`, `to` | `string` | No | Inclusive day range, `yyyy-mm-dd`. |
+| `order_by` | `string` | No | `keys` (default) or `event_count` (largest first). |
+| `limit` | `integer` | No | Maximum rows, default 1000, at most 10000. |
+
+**Result:** `{ "group_by": [...], "rows": [ { <keys>, "event_count": <n> } ], "total_event_count": <n>, "groups": <n>, "truncated": <bool> }`. Times are Danish local time. The full reference is in [mcp-api.md](../mcp-api.md).
+
+---
+
 ### `list_inventory`
 
 List inventory items, ordered by most recently modified. Returns at most 500 items. All filters are optional and combined with AND.
@@ -554,7 +576,7 @@ Resolve a personalised inventory feed for one customer. Returns the ordered item
 
 ## Agillic Marketing automation (MA) tools
 
-The tools below call the Agillic MA API using the Agillic connection that has **default connection** set in its configuration. They are only listed by `tools/list` and `GET /v1/mcp` when an Agillic connection is configured. Failures from Agillic (including non-2xx responses) are returned with code `-32010` and Agillic's status and error body verbatim.
+The tools below call the Agillic MA API using the **Agillic connection** selected under **Account → MCP**. They are only listed by `tools/list` and `GET /v1/mcp`, and can only be called, when an Agillic connection is selected there. Until the MCP settings are saved for the first time, the Agillic connection marked **Default connection**, where this used to be set, is used. Failures from Agillic (including non-2xx responses) are returned with code `-32010` and Agillic's status and error body verbatim.
 
 ### `create_agillic_campaign`
 
@@ -761,6 +783,6 @@ Upload existing template HTML to the asset library as-is (`POST /assets/template
 | `-32602` | Invalid params — missing required arguments or unknown tool name. |
 | `-32603` | Internal error — database or server failure. |
 | `-32002` | Resource not found — customer, inventory item or feed lookup returned no result. |
-| `-32010` | Agillic error — the default Agillic connection could not be resolved, or the Agillic API call failed. |
+| `-32010` | Agillic error — the Agillic connection selected under **Account → MCP** could not be resolved, or the Agillic API call failed. |
 
 ---

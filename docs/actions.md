@@ -137,6 +137,7 @@ listed everywhere else.
 |---|---|
 | **Webhook** | Sends any HTTP request you configure. The general-purpose option. |
 | **Render Properties** | Recalculates properties for the profile. |
+| **Write Properties** | Writes values to the profile's properties, usually what the previous action returned. |
 | **Delete Profile** | Permanently deletes the profile. |
 | **AI Prompt** | Sends a prompt plus the profile and its event history to a language model. |
 | **Person Data** | Upserts a recipient in Agillic MA. |
@@ -184,6 +185,48 @@ onward with a follow-up action, which is re-read from the database after the
 recalculation.
 
 This action type can only be attached to an **Event** trigger.
+
+### Write Properties
+
+Writes values to properties of the profile the action runs for. It is mostly
+used as the follow-up of a webhook or AI prompt, to store what that action
+returned, but it can also be triggered directly to write static or computed
+values.
+
+Each row under **Property mappings** writes one **Profile Property**, and takes
+its value one of two ways:
+
+- **Value Template** — a template rendered against the profile and the previous
+  action's result, for example `{{ .ctx.Get "body.response" }}`. It can combine
+  `.ctx`, `.p` properties, inventory lookups and literal text. The result is
+  text, converted to the property's type: numbers, yes/no words for booleans,
+  JSON text for map properties. A template that renders empty writes an empty
+  value.
+- **Result Field** (**Use single field**) — a dotted path into the previous
+  action's result, `status` or `body.<path>`. The value keeps its JSON type, so
+  numbers and lists arrive as they are. A missing path leaves the property
+  untouched, and an explicit JSON `null` clears it.
+
+List properties can **append** instead of replacing, and date properties take a
+**Date format**. A value that cannot be converted to the property's type is
+skipped and logged. All the values are written in one go.
+
+If a written property is a merge identifier, every other profile holding the
+same value is merged, together with this one, into the oldest of them. The
+values are then written again to the surviving profile, so they win over values
+carried in by the merge, and the rest of the chain continues on that profile.
+
+After the write, calculated properties that depend on the written ones are
+recalculated, and property update triggers watching them fire. The follow-up
+action receives the updated profile and the same `ctx` this action received, so
+a chain like webhook → write properties → webhook still sees the first
+webhook's response.
+
+That last point is also the trap: if a property update trigger on a written
+property leads back, directly or through follow-ups, to a Write Properties
+action writing the same property, the chain runs again on every write and never
+ends. Nothing stops this automatically, so check the triggers on the properties
+an action writes before enabling it.
 
 ### Delete Profile
 
@@ -299,6 +342,7 @@ What ends up in the context depends on the first action:
 | Webhook | The HTTP status code | The response, if it was a JSON object |
 | AI Prompt | `ok` | `response` and `model` |
 | Render Properties | — | Empty; the profile is re-read first |
+| Write Properties | Passed through from the action before it | Passed through from the action before it |
 | Agillic (async) | The acknowledgement status | The acknowledgement, not the final outcome |
 
 Chains are how multi-step outbound flows are built without code: look something

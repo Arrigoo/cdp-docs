@@ -10,5 +10,5 @@
 * [Trackingscript](docs/trackingscript.md)
 * [Roles](docs/access-and-roles.md)
 * [API](docs/api.md)
-* [MCP API](docs/mcp-api.md)
+* [MCP API](docs/mcp.md)
 * [Hosting and operations](docs/hosting-and-operations.md)
