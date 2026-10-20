@@ -1,5 +1,7 @@
 # Arrigoo CDP API endpoints
 
+For statistics methods, go to the [Stats API document](docs/stats-api.md)
+
 ## Authentication
 
 Initially, you create an API key by going to the account settings (the cog wheel at the top right) and select the sub menu item 'API keys'.
@@ -32,7 +34,7 @@ Response example:
 An access token must be used on every request to extract or update data as a bearer token. Example:
 
 ```bash
-POST /v1/stat/segment
+GET /v1/stat/segment
 Headers:
     Content-type: application/json
     Accept: application/json
@@ -247,151 +249,9 @@ Response:
 
 ## Statistics
 
-The statistics for the dashboard and numbers displayed in the interface are all available through the API.
-
-They are based on aggregated datasets that are build at night.
-
-```bash
-GET /v1/stat/segment
-```
-
-**Response:**
-
-```json
-{
-    "types": [
-        "active",
-        "inactive"
-    ],
-    "entries": [
-        {
-            "total": 2943,
-            "entry": "Binge reader",
-            "stats": {
-                "active": 2940,
-                "inactive": 3
-            }
-        },
-        {
-            "total": 4348,
-            "entry": "Is subscriber",
-            "stats": {
-                "active": 4348,
-                "inactive": 0
-            }
-        },
-        {
-            "total": 3770,
-            "entry": "Not subscriber",
-            "stats": {
-                "active": 1297,
-                "inactive": 2473
-            }
-        },
-        {
-            "total": 3601,
-            "entry": "Top reader",
-            "stats": {
-                "active": 3009,
-                "inactive": 592
-            }
-        }
-    ]
-}
-```
-
-```bash
-GET /v1/stat/event
-```
-
-Daily event stats for the past month.
-
-**Response**
-```json
-{
-    "types": [
-        "checkout",
-        "login",
-        "nl_signup",
-        "nl_unsubscribe",
-        "pageview",
-        "pageview_nl",
-        "purchase"
-    ],
-    "entries": [
-        {
-            "total": 137,
-            "entry": "2025-02-25T00:00:00Z",
-            "stats": {
-                "checkout": 137,
-                "login": 129,
-                "nl_signup": 114,
-                "nl_unsubscribe": 439,
-                "pageview": 466,
-                "pageview_nl": 409,
-                "purchase": 438
-            }
-        },
-        {
-            "total": 121,
-            "entry": "2025-02-26T00:00:00Z",
-            "stats": {
-                "checkout": 121,
-                "login": 128,
-                "nl_signup": 126,
-                "nl_unsubscribe": 453,
-                "pageview": 466,
-                "pageview_nl": 409,
-                "purchase": 352
-            }
-        },
-        ...
-   ]
-}
-```
-
-```bash
-GET /v1/stat/event/month
-```
-
-Monthly event stats.
-
-**Response**
-```json
-{
-    "types": [],
-    "entries": [
-        {
-            "total": 32572,
-            "entry": "2024-12",
-            "stats": {
-                "total": 32572
-            }
-        },
-        {
-            "total": 152286,
-            "entry": "2025-01",
-            "stats": {
-                "total": 152286
-            }
-        },
-        {
-            "total": 87882,
-            "entry": "2025-02",
-            "stats": {
-                "total": 87882
-            }
-        },
-        {
-            "total": 23504,
-            "entry": "2025-03",
-            "stats": {
-                "total": 23504
-            }
-        }
-    ]
-}
-```
+The statistics for the dashboard and the numbers displayed in the interface are all
+available through the API, under `/v1/stat`. They are described in the
+[statistics API guide](stats-api.md).
 
 ## Configuration: properties, segments and event types
 
