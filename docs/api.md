@@ -1,5 +1,7 @@
 # Arrigoo CDP API endpoints
 
+For statistics methods, go to the [Stats API document](stats-api.md)
+
 ## Authentication
 
 Initially, you create an API key by going to the account settings (the cog wheel at the top right) and select the sub menu item 'API keys'.
